@@ -1,0 +1,13 @@
+# Minecraft server jars
+*.jar
+
+# Large mod files or zip archives
+*.zip
+mods/
+config/
+world/
+
+# OS or editor files
+.DS_Store
+*.log
+*.tmp
