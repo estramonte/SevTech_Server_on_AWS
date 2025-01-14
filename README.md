@@ -43,8 +43,9 @@ This project sets up a SevTech Ages Minecraft server on an AWS EC2 instance.
    unzip SevTechServer.zip
    cd SevTechServer
    echo "eula=true" > eula.txt
-   java -Xmx4G -Xms2G -jar forge-1.12.2-14.23.5.2854-universal.jar nogui
    ```
+
+   - Follow the instructions in the server's README.txt file to prepare and run the server.
 
 5. **(Optional) Add Scripts for Backups or Set Up IAM Role for S3 Backups**
    - Consider creating scripts for regular backups.
@@ -53,3 +54,40 @@ This project sets up a SevTech Ages Minecraft server on an AWS EC2 instance.
 ## Note on .gitignore
 
 Ensure that large files, such as server jars and mods, are not committed to the repository.
+
+# On-demand SevTech Ages server on AWS with a Discord bot
+
+## Project Description
+
+This project sets up an on-demand SevTech Ages Minecraft server on an AWS EC2 instance, controlled via a Discord bot. It includes an idle-stop script to automatically stop the server when no players are online.
+
+## Step-by-Step Setup Instructions
+
+1. **Set up the AWS EC2 Instance**
+
+   - Launch a t3.large instance.
+   - Configure the security group to allow port 25565 for Minecraft.
+
+2. **Install Java and Upload SevTech Server Files**
+
+   - Follow the existing steps in the project documentation.
+
+3. **Configure the Discord Bot**
+
+   - Create a Discord app and obtain a bot token.
+   - Copy `.env.example` to `.env` and fill in `DISCORD_BOT_TOKEN`, AWS credentials, instance ID, region, etc.
+
+4. **Run the Discord Bot**
+
+   - Execute `node index.js` to start the bot.
+
+5. **Set up the Idle-Check Script**
+   - Deploy `idle-check.sh` on the server and configure it with a cron job or systemd to stop the instance if no players are online for 10–15 minutes.
+
+## Note
+
+- Do not commit real credentials. Use `.env` for sensitive information and `.env.example` as a template.
+
+## Usage Example
+
+- In Discord, type `!startSevTech` to start the server, `!stopSevTech` to stop it, and `!status` to check the server status.

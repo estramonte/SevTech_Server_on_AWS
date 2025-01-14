@@ -1,3 +1,12 @@
+# Node / Java / Python typical stuff
+node_modules/
+.env
+*.env
+*.log
+
+# OS / editor
+.DS_Store
+
 # Minecraft server jars
 *.jar
 
@@ -6,8 +15,3 @@
 mods/
 config/
 world/
-
-# OS or editor files
-.DS_Store
-*.log
-*.tmp
