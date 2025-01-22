@@ -91,3 +91,43 @@ This project sets up an on-demand SevTech Ages Minecraft server on an AWS EC2 in
 ## Usage Example
 
 - In Discord, type `!startSevTech` to start the server, `!stopSevTech` to stop it, and `!status` to check the server status.
+
+## Automated Discord Bot Management
+
+### Start and Stop Scripts
+
+- **Start Script**: `start-discord-bot.sh` is used to start the Discord bot.
+- **Stop Script**: `stop-discord-bot.sh` is used to stop the Discord bot.
+
+### Setting Up Cron Jobs
+
+1. **Edit Crontab**:
+
+   - Use `crontab -e` to open the crontab editor.
+
+2. **Add the Following Lines**:
+   - Schedule the Discord bot to start at 8 AM daily:
+     ```
+     0 8 * * * /home/ubuntu/SevTechServer/SevTechServer/SevTech_Server_on_AWS/server-scripts/start-discord-bot.sh
+     ```
+   - Schedule the Discord bot to stop at 10 PM daily:
+     ```
+     0 22 * * * /home/ubuntu/SevTechServer/SevTechServer/SevTech_Server_on_AWS/server-scripts/stop-discord-bot.sh
+     ```
+
+### Idle Check Script
+
+- **Idle Check**: `idle-check.sh` runs every 5 minutes to stop the Minecraft server if no players are online for 10 minutes.
+
+3. **Add the Following Line to Crontab**:
+   - Ensure the script only runs if the server is active:
+     ```
+     */5 * * * * pgrep -f "forge-1.12.2-14.23.5.2860.jar" > /dev/null && /home/ubuntu/SevTechServer/SevTechServer/SevTech_Server_on_AWS/server-scripts/idle-check.sh
+     ```
+
+### Permissions
+
+- Ensure all scripts have execute permissions:
+  ```bash
+  chmod +x /path/to/script.sh
+  ```
