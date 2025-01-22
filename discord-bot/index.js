@@ -4,7 +4,11 @@ const AWS = require("aws-sdk");
 const { exec } = require("child_process");
 
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+  ],
 });
 
 // Configure AWS SDK
@@ -20,9 +24,19 @@ client.on("ready", () => {
 });
 
 client.on("messageCreate", async (message) => {
-  if (message.author.bot) return;
+  console.log("messageCreate event triggered");
+  console.log(`Received message: "${message.content}"`);
 
-  if (message.content === "!startSevTech") {
+  if (message.author.bot) {
+    console.log("Message is from a bot, ignoring.");
+    return;
+  }
+
+  console.log("Message is not from a bot, processing.");
+  console.log("Message content:", message.content);
+
+  if (message.content.trim() === "!startSevTech") {
+    console.log("Command detected: !startSevTech");
     try {
       await message.channel.send("Starting Minecraft server...");
       exec(
@@ -36,9 +50,11 @@ client.on("messageCreate", async (message) => {
         }
       );
     } catch (error) {
+      console.error("Error starting server:", error);
       message.channel.send(`Error: ${error.message}`);
     }
-  } else if (message.content === "!stopSevTech") {
+  } else if (message.content.trim() === "!stopSevTech") {
+    console.log("Command detected: !stopSevTech");
     try {
       await message.channel.send("Stopping Minecraft server...");
       exec(
@@ -52,26 +68,28 @@ client.on("messageCreate", async (message) => {
         }
       );
     } catch (error) {
+      console.error("Error stopping server:", error);
       message.channel.send(`Error: ${error.message}`);
     }
-  } else if (message.content === "!status") {
+  } else if (message.content.trim() === "!status") {
+    console.log("Command detected: !status");
     try {
-      const data = await ec2
-        .describeInstances({ InstanceIds: [process.env.INSTANCE_ID] })
-        .promise();
-      const state = data.Reservations[0].Instances[0].State.Name;
-      message.channel.send(`EC2 instance is currently ${state}.`);
-
-      exec("pgrep -f 'java -jar server.jar'", (error, stdout, stderr) => {
-        if (stdout) {
-          message.channel.send("Minecraft server is currently running.");
-        } else {
-          message.channel.send("Minecraft server is not running.");
+      exec(
+        `mcrcon -H ::1 -P 25575 -p IloveCocoa "list"`,
+        (error, stdout, stderr) => {
+          if (error) {
+            message.channel.send(`Error checking server status: ${stderr}`);
+            return;
+          }
+          message.channel.send(`Server status:\n${stdout}`);
         }
-      });
+      );
     } catch (error) {
+      console.error("Error checking status:", error);
       message.channel.send(`Error: ${error.message}`);
     }
+  } else {
+    console.log("No matching command found.");
   }
 });
 
